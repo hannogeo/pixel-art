@@ -33,7 +33,7 @@ function App() {
   const [history, setHistory] = useState<ImageData[]>([])
   const [historyIndex, setHistoryIndex] = useState(-1)
   const [showNewModal, setShowNewModal] = useState(false)
-  const [showGalleryModal, setShowGalleryModal] = useState(false)
+  const [showGalleryModal, setShowGalleryModal] = useState(true)
   const [showExportModal, setShowExportModal] = useState(false)
   const [projects, setProjects] = useState<any[]>([])
   const [currentProjectName, setCurrentProjectName] = useState('Untitled')
@@ -368,7 +368,8 @@ function App() {
         <span>pixel-art</span>
       </div>
       
-      <div className="main-layout">
+      {currentProjectId ? (
+        <div className="main-layout">
         <aside className="sidebar">
           <div>
             <h2>Tools</h2>
@@ -546,6 +547,28 @@ function App() {
           </div>
         </main>
       </div>
+      ) : (
+        <div className="empty-state" style={{ 
+          flex: 1, 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          backgroundColor: 'var(--bg-primary)',
+          backgroundImage: 'radial-gradient(var(--bg-secondary) 2px, transparent 2px)',
+          backgroundSize: '30px 30px'
+        }}>
+          <h1 style={{ 
+            fontFamily: "'Press Start 2P', cursive", 
+            fontSize: '3rem', 
+            color: 'var(--bg-tertiary)',
+            textTransform: 'lowercase',
+            opacity: 0.2
+          }}>
+            pixel-art
+          </h1>
+        </div>
+      )}
 
       {showNewModal && (
         <div className="modal-overlay">
@@ -627,9 +650,27 @@ function App() {
                 ))
               )}
             </div>
-            <button className="btn btn-secondary" style={{ width: '100%', marginTop: '1.5rem' }} onClick={() => setShowGalleryModal(false)}>
-              Close
-            </button>
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+              <button 
+                className="btn btn-primary" 
+                style={{ flex: 1 }} 
+                onClick={() => {
+                  setShowGalleryModal(false)
+                  setShowNewModal(true)
+                }}
+              >
+                + Create New
+              </button>
+              {currentProjectId && (
+                <button 
+                  className="btn btn-secondary" 
+                  style={{ flex: 1 }} 
+                  onClick={() => setShowGalleryModal(false)}
+                >
+                  Close
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
