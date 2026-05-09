@@ -71,7 +71,8 @@
       {
         "provider": "github",
         "owner": "hannogeo",
-        "repo": "pixel-art"
+        "repo": "pixel-art",
+        "releaseType": "release"
       }
     ]
   }
