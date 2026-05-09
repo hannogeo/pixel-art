@@ -13,9 +13,7 @@ import {
   ZoomIn,
   ZoomOut,
   Maximize,
-  Save,
-  Library,
-  FileCode
+  Library
 } from 'lucide-react'
 
 type Tool = 'pen' | 'eraser' | 'fill'
