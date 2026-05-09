@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { 
-  Square, 
   Eraser, 
   PaintBucket, 
   Download, 
