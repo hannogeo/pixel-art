@@ -61,6 +61,12 @@ function App() {
   }, [])
 
   useEffect(() => {
+    if (currentProjectId && canvasRef.current && !ctxRef.current) {
+      initCanvas(resolution)
+    }
+  }, [currentProjectId])
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey) {
         if (e.key === 'z') {
@@ -193,10 +199,18 @@ function App() {
   }
 
   const deleteProject = async (id: string) => {
-    const saved = await window.ipcRenderer.invoke('load-projects')
-    const filtered = saved.filter((p: any) => p.id !== id)
-    await window.ipcRenderer.invoke('save-projects', filtered)
-    loadProjects()
+    if (window.confirm('Are you sure you want to delete this project? This cannot be undone.')) {
+      const saved = await window.ipcRenderer.invoke('load-projects')
+      const filtered = saved.filter((p: any) => p.id !== id)
+      await window.ipcRenderer.invoke('save-projects', filtered)
+      
+      if (id === currentProjectId) {
+        setCurrentProjectId(null)
+        setShowGalleryModal(true)
+      }
+      
+      loadProjects()
+    }
   }
 
   useEffect(() => {
@@ -627,7 +641,16 @@ function App() {
         <div className="modal-overlay">
           <div className="modal-content" style={{ maxWidth: '600px' }}>
             <h2>My Gallery</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '1rem', maxHeight: '400px', overflowY: 'auto', padding: '0.5rem' }}>
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', 
+              gap: '1.5rem', 
+              maxHeight: '60vh', 
+              overflowY: 'auto', 
+              padding: '1rem',
+              border: 'var(--pixel-border) solid var(--bg-tertiary)',
+              backgroundColor: 'var(--bg-primary)'
+            }}>
               {projects.length === 0 ? (
                 <p style={{ gridColumn: '1/-1', textAlign: 'center', color: 'var(--text-secondary)' }}>No saved projects yet.</p>
               ) : (
