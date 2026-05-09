@@ -14,7 +14,7 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 var win;
 function createWindow() {
 	win = new BrowserWindow({
-		icon: path.join(process.env.VITE_PUBLIC, "icon.png"),
+		icon: path.join(process.env.VITE_PUBLIC || "", "icon.png"),
 		webPreferences: { preload: path.join(__dirname, "preload.mjs") },
 		width: 1200,
 		height: 800,

@@ -13,7 +13,8 @@ import {
   ZoomIn,
   ZoomOut,
   Maximize,
-  Library
+  Library,
+  Pencil
 } from 'lucide-react'
 
 type Tool = 'pen' | 'eraser' | 'fill'
@@ -38,6 +39,7 @@ function App() {
   const [projects, setProjects] = useState<any[]>([])
   const [currentProjectName, setCurrentProjectName] = useState('Untitled')
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null)
+  const [hoverPos, setHoverPos] = useState<{ x: number, y: number } | null>(null)
   const [lastSaved, setLastSaved] = useState<number | null>(null)
   const [updateAvailable, setUpdateAvailable] = useState(false)
   const [updateDownloaded, setUpdateDownloaded] = useState(false)
@@ -240,9 +242,10 @@ function App() {
   }
 
   const draw = (e: React.MouseEvent | React.TouchEvent, force = false) => {
-    if (!force && (!isDrawing || !ctxRef.current)) return
-
     const { x, y } = getCoordinates(e)
+    setHoverPos({ x, y })
+
+    if (!force && (!isDrawing || !ctxRef.current)) return
     const isRightClick = 'buttons' in e && (e.buttons === 2 || e.buttons === 3)
     
     if (isRightClick || tool === 'eraser') {
@@ -374,9 +377,9 @@ function App() {
               <button 
                 className={`tool-button ${tool === 'pen' ? 'active' : ''}`}
                 onClick={() => setTool('pen')}
-                title="Pen"
+                title="Pencil (P)"
               >
-                <Square size={20} fill={tool === 'pen' ? 'currentColor' : 'none'} />
+                <Pencil size={20} />
               </button>
               <button 
                 className={`tool-button ${tool === 'eraser' ? 'active' : ''}`}
@@ -525,6 +528,22 @@ function App() {
               style={{ width: '100%', height: '100%' }}
             />
             {showGrid && <div className="grid-overlay" />}
+            {hoverPos && (
+              <div 
+                className="pixel-cursor"
+                style={{
+                  left: `${hoverPos.x * (600 * zoom / resolution)}px`,
+                  top: `${hoverPos.y * (600 * zoom / resolution)}px`,
+                  width: `var(--grid-size)`,
+                  height: `var(--grid-size)`,
+                  position: 'absolute',
+                  border: '2px solid var(--accent-primary)',
+                  pointerEvents: 'none',
+                  zIndex: 10,
+                  boxSizing: 'border-box',
+                }}
+              />
+            )}
           </div>
         </main>
       </div>
