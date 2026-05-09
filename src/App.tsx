@@ -470,7 +470,15 @@ function App() {
               >
                 <ZoomOut size={18} />
               </button>
-              <span style={{ display: 'flex', alignItems: 'center', fontSize: '0.75rem', minWidth: '40px', justifyContent: 'center' }}>
+              <span style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                fontSize: '0.6rem', 
+                fontFamily: "'Press Start 2P', cursive",
+                minWidth: '60px', 
+                justifyContent: 'center',
+                color: 'var(--accent-primary)'
+              }}>
                 {Math.round(zoom * 100)}%
               </span>
               <button 
