@@ -562,25 +562,8 @@ function App() {
         </main>
       </div>
       ) : (
-        <div className="empty-state" style={{ 
-          flex: 1, 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          backgroundColor: 'var(--bg-primary)',
-          backgroundImage: 'radial-gradient(var(--bg-secondary) 2px, transparent 2px)',
-          backgroundSize: '30px 30px'
-        }}>
-          <h1 style={{ 
-            fontFamily: "'Press Start 2P', cursive", 
-            fontSize: '3rem', 
-            color: 'var(--bg-tertiary)',
-            textTransform: 'lowercase',
-            opacity: 0.2
-          }}>
-            pixel-art
-          </h1>
+        <div className="empty-state">
+          <h1>pixel-art</h1>
         </div>
       )}
 
@@ -609,7 +592,15 @@ function App() {
                 />
               </div>
               <div style={{ display: 'flex', gap: '1rem' }}>
-                <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setShowNewModal(false)}>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  style={{ flex: 1 }} 
+                  onClick={() => {
+                    setShowNewModal(false)
+                    if (!currentProjectId) setShowGalleryModal(true)
+                  }}
+                >
                   Cancel
                 </button>
                 <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
@@ -641,23 +632,15 @@ function App() {
         <div className="modal-overlay">
           <div className="modal-content" style={{ maxWidth: '600px' }}>
             <h2>My Gallery</h2>
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', 
-              gap: '1.5rem', 
-              maxHeight: '60vh', 
-              overflowY: 'auto', 
-              padding: '1rem',
-              border: 'var(--pixel-border) solid var(--bg-tertiary)',
-              backgroundColor: 'var(--bg-primary)'
-            }}>
+            <div className="gallery-grid">
               {projects.length === 0 ? (
                 <p style={{ gridColumn: '1/-1', textAlign: 'center', color: 'var(--text-secondary)' }}>No saved projects yet.</p>
               ) : (
                 projects.map(p => (
-                  <div key={p.id} className="gallery-item" style={{ background: 'var(--bg-tertiary)', borderRadius: '0.5rem', padding: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <div key={p.id} className="gallery-item">
                     <div 
-                      style={{ aspectRatio: '1', background: 'white', borderRadius: '0.25rem', cursor: 'pointer', backgroundImage: `url(${p.data})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', imageRendering: 'pixelated' }}
+                      className="gallery-thumb"
+                      style={{ backgroundImage: `url(${p.data})` }}
                       onClick={() => loadProject(p)}
                     />
                     <div style={{ fontSize: '0.875rem', fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
@@ -704,8 +687,6 @@ function App() {
             <div className="form-group">
               <label>Choose Background</label>
               <select 
-                className="control-btn" 
-                style={{ width: '100%', padding: '0.75rem', marginBottom: '0.5rem' }}
                 value={exportBackground === 'transparent' ? 'transparent' : (['#ffffff', '#000000'].includes(exportBackground) ? exportBackground : 'custom')}
                 onChange={(e) => {
                   const val = e.target.value
