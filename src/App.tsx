@@ -13,7 +13,8 @@ import {
   ZoomOut,
   Maximize,
   Library,
-  Pencil
+  Pencil,
+  Image as ImageIcon
 } from 'lucide-react'
 
 type Tool = 'pen' | 'eraser' | 'fill'
@@ -42,6 +43,8 @@ function App() {
   const [lastSaved, setLastSaved] = useState<number | null>(null)
   const [updateAvailable, setUpdateAvailable] = useState(false)
   const [updateDownloaded, setUpdateDownloaded] = useState(false)
+  const [referenceImage, setReferenceImage] = useState<string | null>(null)
+  const [referenceOpacity, setReferenceOpacity] = useState(0.5)
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null)
@@ -439,6 +442,50 @@ function App() {
             />
           </div>
 
+          <div className="reference-section">
+            <h2>Reference</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <label className="btn btn-secondary" style={{ cursor: 'pointer', textAlign: 'center', padding: '0.5rem' }}>
+                <ImageIcon size={18} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />
+                {referenceImage ? 'Change Image' : 'Upload Image'}
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  style={{ display: 'none' }} 
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (e) => setReferenceImage(e.target?.result as string);
+                      reader.readAsDataURL(file);
+                    }
+                  }} 
+                />
+              </label>
+              {referenceImage && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Opacity</span>
+                    <input 
+                      type="range" 
+                      min="0" max="1" step="0.05" 
+                      value={referenceOpacity}
+                      onChange={(e) => setReferenceOpacity(parseFloat(e.target.value))}
+                      style={{ flex: 1, cursor: 'pointer' }}
+                    />
+                  </div>
+                  <button 
+                    className="btn btn-secondary" 
+                    style={{ fontSize: '0.75rem', padding: '0.25rem', color: 'var(--danger-color)', borderColor: 'var(--danger-color)', marginTop: '0.5rem' }} 
+                    onClick={() => setReferenceImage(null)}
+                  >
+                    Clear Reference
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="action-buttons">
             <button className="btn btn-secondary" onClick={() => setShowGalleryModal(true)}>
               <Library size={18} /> My Gallery
@@ -480,6 +527,26 @@ function App() {
 
           <div className="canvas-controls-right">
             <div style={{ display: 'flex', gap: '0.5rem', marginRight: '1rem' }}>
+              <span style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                fontSize: '0.6rem', 
+                fontFamily: "'Press Start 2P', cursive",
+                minWidth: '50px', 
+                justifyContent: 'center',
+                color: 'var(--accent-primary)',
+                marginRight: '0.5rem'
+              }}>
+                {Math.round(zoom * 100)}%
+              </span>
+              <input 
+                type="range"
+                min="0.5" max="3" step="0.1"
+                value={zoom}
+                onChange={(e) => setZoom(parseFloat(e.target.value))}
+                style={{ width: '120px', margin: '0 0.5rem 0 0', transform: 'translateY(10px)' }}
+                title="Zoom Level"
+              />
               <button 
                 className="control-btn" 
                 onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
@@ -487,17 +554,6 @@ function App() {
               >
                 <ZoomOut size={18} />
               </button>
-              <span style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                fontSize: '0.6rem', 
-                fontFamily: "'Press Start 2P', cursive",
-                minWidth: '60px', 
-                justifyContent: 'center',
-                color: 'var(--accent-primary)'
-              }}>
-                {Math.round(zoom * 100)}%
-              </span>
               <button 
                 className="control-btn" 
                 onClick={() => setZoom(Math.min(3, zoom + 0.1))}
@@ -530,6 +586,22 @@ function App() {
               '--grid-size': `${(600 * zoom) / resolution}px`
             } as React.CSSProperties}
           >
+            {referenceImage && (
+              <img 
+                src={referenceImage} 
+                alt="Reference"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  opacity: referenceOpacity,
+                  pointerEvents: 'none',
+                  zIndex: 0
+                }}
+              />
+            )}
             <canvas
               ref={canvasRef}
               className="pixel-canvas"
@@ -539,7 +611,7 @@ function App() {
               onMouseLeave={handleMouseUp}
               onContextMenu={(e) => e.preventDefault()}
               onDragStart={(e) => e.preventDefault()}
-              style={{ width: '100%', height: '100%' }}
+              style={{ width: '100%', height: '100%', position: 'relative', zIndex: 1 }}
             />
             {showGrid && <div className="grid-overlay" />}
             {hoverPos && (

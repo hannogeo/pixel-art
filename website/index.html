@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>pixel-art | Retro Pixel Art Editor</title>
+    <title>pixel-art</title>
+    <link rel="icon" type="image/png" href="../public/webicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -206,7 +207,7 @@
                     btn.href = asset.browser_download_url;
                     btn.setAttribute('download', '');
                     versionText.innerText = `Version ${data.tag_name} • ${Math.round(asset.size / 1024 / 1024)}MB`;
-                    loadingText.innerText = "CLICK TO START DIRECT DOWNLOAD";
+                    loadingText.innerText = "CLICK TO START DOWNLOAD";
                     loadingText.style.color = "var(--accent)";
                 } else {
                     // This happens if the Release exists but GitHub Actions is still uploading the file
